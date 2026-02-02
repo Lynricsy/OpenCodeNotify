@@ -17,15 +17,19 @@ function extractTextContent(parts: Part[]): string {
 }
 
 export const plugin: Plugin = async (ctx) => {
+  // 插件在 TUI 场景下不应输出任何日志：配置异常时直接禁用。
+  let enabled = true;
   try {
     getConfig();
-    console.log("🔔 OpenCode Telegram 通知插件已加载");
-  } catch (error) {
-    console.error("⚠️ OpenCode Telegram 通知插件配置错误:", error);
+  } catch {
+    enabled = false;
   }
 
   return {
     event: async ({ event }) => {
+      if (!enabled) {
+        return;
+      }
       if (event.type !== "session.idle") {
         return;
       }
@@ -33,40 +37,44 @@ export const plugin: Plugin = async (ctx) => {
       try {
         const { sessionID } = (event as EventSessionIdle).properties;
 
+        // 子 agent 会创建子 session，结束时也会触发 session.idle。
+        // 为避免将子 session 的结束消息误发到 Telegram，这里仅处理根 session。
+        const { data: session, error: sessionError } = await ctx.client.session.get({
+          path: { id: sessionID },
+        });
+
+        if (sessionError || !session) {
+          return;
+        }
+
+        if (session.parentID) {
+          return;
+        }
+
         const { data: messages, error } = await ctx.client.session.messages({
           path: { id: sessionID },
           query: { limit: 10 },
         });
 
-        if (error || !messages) {
-          console.error("❌ 获取消息失败:", error);
-          return;
-        }
+        if (error || !messages) return;
 
         const lastAssistantMessage = [...messages]
           .reverse()
           .find((msg) => msg.info.role === "assistant");
 
-        if (!lastAssistantMessage) {
-          console.log("ℹ️ 未找到 assistant 消息，跳过通知");
-          return;
-        }
+        if (!lastAssistantMessage) return;
 
         const textContent = extractTextContent(lastAssistantMessage.parts);
 
-        if (!textContent.trim()) {
-          console.log("ℹ️ 消息内容为空，跳过通知");
-          return;
-        }
+        if (!textContent.trim()) return;
 
         const htmlContent = formatForTelegram(textContent);
         const messageParts = splitMessage(htmlContent);
 
         await sendMessages(messageParts, "HTML");
 
-        console.log(`✅ 已发送 ${messageParts.length} 条通知到 Telegram`);
-      } catch (error) {
-        console.error("❌ 发送 Telegram 通知失败:", error);
+      } catch {
+        // 避免污染 TUI：吞掉异常即可
       }
     },
   };

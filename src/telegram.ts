@@ -45,7 +45,6 @@ async function sendWithRetry(url: string, body: any, retries: number = 0): Promi
     const data = await response.json();
     const retryAfter = data.parameters?.retry_after || 5;
     
-    console.warn(`⚠️ Telegram API 速率限制，${retryAfter} 秒后重试...`);
     await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
     
     return sendWithRetry(url, body, retries + 1);
