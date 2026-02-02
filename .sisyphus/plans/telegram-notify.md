@@ -179,7 +179,7 @@ Critical Path: Task 1 → Task 2 → Task 6 → Task 7
 
 ## TODOs
 
-- [ ] 1. 初始化项目结构
+- [x] 1. 初始化项目结构
 
   **What to do**:
   - 创建 `package.json` 配置文件
@@ -240,7 +240,7 @@ Critical Path: Task 1 → Task 2 → Task 6 → Task 7
 
 ---
 
-- [ ] 2. 实现配置管理模块
+- [x] 2. 实现配置管理模块
 
   **What to do**:
   - 创建 `src/config.ts`
@@ -291,7 +291,7 @@ Critical Path: Task 1 → Task 2 → Task 6 → Task 7
 
 ---
 
-- [ ] 3. 实现 Telegram API 封装
+- [x] 3. 实现 Telegram API 封装
 
   **What to do**:
   - 创建 `src/telegram.ts`
@@ -351,7 +351,7 @@ Critical Path: Task 1 → Task 2 → Task 6 → Task 7
 
 ---
 
-- [ ] 4. 实现 Markdown 到 Telegram HTML 格式转换器
+- [x] 4. 实现 Markdown 到 Telegram HTML 格式转换器
 
   **What to do**:
   - 创建 `src/formatter.ts`
@@ -418,7 +418,7 @@ Critical Path: Task 1 → Task 2 → Task 6 → Task 7
 
 ---
 
-- [ ] 5. 实现智能消息分割器
+- [x] 5. 实现智能消息分割器
 
   **What to do**:
   - 创建 `src/splitter.ts`
@@ -487,7 +487,7 @@ Critical Path: Task 1 → Task 2 → Task 6 → Task 7
 
 ---
 
-- [ ] 6. 实现插件主逻辑
+- [x] 6. 实现插件主逻辑
 
   **What to do**:
   - 创建 `src/index.ts` 作为插件入口
@@ -565,7 +565,7 @@ Critical Path: Task 1 → Task 2 → Task 6 → Task 7
 
 ---
 
-- [ ] 7. 编写 README 文档
+- [x] 7. 编写 README 文档
 
   **What to do**:
   - 创建/更新 `README.md`
