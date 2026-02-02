@@ -96,24 +96,24 @@ Chat ID 是你与 Bot 对话的唯一标识符。获取步骤：
 3. 使用上述 getUpdates API 方法获取群组的 Chat ID
 4. 群组的 Chat ID 通常是**负数**，如 `-1001234567890`
 
-### 3. 配置环境变量 ⚙️
+### 3. 配置插件 ⚙️
 
-在项目根目录创建 `.env` 文件：
+创建配置文件 `~/.config/opencode/opencode-notify.json`：
 
 ```bash
-cd /path/to/OpenCodeNotify
-cp .env.example .env
+mkdir -p ~/.config/opencode
 ```
 
-编辑 `.env` 文件，填入你的配置：
+创建并编辑配置文件：
 
-```env
-# Telegram Bot Token - 从 @BotFather 获取
-TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
-
-# Telegram Chat ID - 你要发送消息的目标聊天 ID
-TELEGRAM_CHAT_ID=987654321
+```json
+{
+  "telegram_bot_token": "123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
+  "telegram_chat_id": "987654321"
+}
 ```
+
+> 📁 **配置文件路径**: `~/.config/opencode/opencode-notify.json`
 
 ### 4. 在 OpenCode 中启用插件 🚀
 
@@ -139,10 +139,21 @@ export OPENCODE_PLUGINS="/path/to/OpenCodeNotify"
 
 ## 配置说明 📋
 
-| 环境变量 | 必填 | 说明 |
-|----------|------|------|
-| `TELEGRAM_BOT_TOKEN` | ✅ 是 | 从 @BotFather 获取的 Bot Token |
-| `TELEGRAM_CHAT_ID` | ✅ 是 | 目标聊天的 ID（用户 ID 或群组 ID） |
+配置文件路径：`~/.config/opencode/opencode-notify.json`
+
+| 配置项 | 必填 | 说明 |
+|--------|------|------|
+| `telegram_bot_token` | ✅ 是 | 从 @BotFather 获取的 Bot Token |
+| `telegram_chat_id` | ✅ 是 | 目标聊天的 ID（用户 ID 或群组 ID） |
+
+**配置文件示例：**
+
+```json
+{
+  "telegram_bot_token": "123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
+  "telegram_chat_id": "987654321"
+}
+```
 
 ## 工作原理 🔧
 
@@ -193,7 +204,6 @@ OpenCodeNotify/
 │   ├── formatter.ts  # Markdown → HTML 格式转换
 │   ├── splitter.ts   # 智能消息分割
 │   └── telegram.ts   # Telegram API 调用
-├── .env.example      # 环境变量示例
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -231,7 +241,7 @@ curl -X POST "https://api.telegram.org/bot<YOUR_TOKEN>/sendMessage" \
 1. 将 Bot 添加到目标群组
 2. 在群组中发送一条消息
 3. 通过 getUpdates 获取群组的 Chat ID（负数）
-4. 将群组 Chat ID 配置到 `TELEGRAM_CHAT_ID`
+4. 将群组 Chat ID 配置到 `telegram_chat_id`
 
 ## 许可证 📄
 
