@@ -5,7 +5,7 @@
 import type { Plugin } from "@opencode-ai/plugin";
 import type { EventSessionIdle, Part, TextPart } from "@opencode-ai/sdk";
 import { getConfig } from "./config";
-import { formatForTelegram } from "./formatter";
+import { escapeHtml, formatForTelegram } from "./formatter";
 import { splitMessage } from "./splitter";
 import { sendMessages } from "./telegram";
 
@@ -68,10 +68,35 @@ export const plugin: Plugin = async (ctx) => {
 
         if (!textContent.trim()) return;
 
-        const htmlContent = formatForTelegram(textContent);
-        const messageParts = splitMessage(htmlContent);
+        const now = new Date();
+        const timeStr = now.toLocaleString("zh-CN", {
+          timeZone: "Asia/Shanghai",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
 
-        await sendMessages(messageParts, "HTML");
+        const htmlContent = formatForTelegram(textContent);
+        const contentParts = splitMessage(htmlContent);
+        const totalPages = contentParts.length;
+
+        const messagesWithHeaders = contentParts.map((content, index) => {
+          const pageInfo = totalPages > 1 ? ` (${index + 1}/${totalPages})` : "";
+          const headerLines = [
+            `📋 <b>${escapeHtml(session.title || "未命名会话")}</b>${pageInfo}`,
+            `📁 <code>${escapeHtml(session.directory)}</code>`,
+            `🕐 ${escapeHtml(timeStr)}`,
+            "",
+            "───────────────",
+            "",
+          ];
+          return headerLines.join("\n") + content;
+        });
+
+        await sendMessages(messagesWithHeaders, "HTML");
 
       } catch {
         // 避免污染 TUI：吞掉异常即可
